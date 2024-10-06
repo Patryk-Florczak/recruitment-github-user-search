@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 
 import Searchbox from 'components/UserSearch/Searchbox';
+import { theme } from 'theme';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -10,12 +11,6 @@ export const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: false,
     },
-  },
-});
-
-const theme = createTheme({
-  palette: {
-    mode: 'dark',
   },
 });
 

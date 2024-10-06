@@ -1,7 +1,7 @@
 import { useInfiniteQuery, UseInfiniteQueryOptions, InfiniteData } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = process.env.VITE_API_URL;
 
 interface Props<Resource> {
   queryKey: string;

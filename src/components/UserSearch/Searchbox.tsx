@@ -8,11 +8,14 @@ import { SearchUsers } from 'types/api/SearchUsers';
 import useInfiniteFetchData from 'hooks/useInfiniteFetchData';
 import useSearchboxFormController from 'components/UserSearch/FormController';
 import UserRow from 'components/UserSearch/elements/UserRow';
-import { ErrorMessage } from 'components/elements/ErrorMessage';
+import { ErrorMessage } from 'components/utils/ErrorMessage';
 
 const DEBOUNCE_TIME = 2000;
 
+// NOTE I'm not sure what you can consider as "interesting" technique of functional programming, so I will mark a few concepts that can be treated as useful
+
 const Searchbox = () => {
+  // Custom hooks - I'm using custom hooks to potentially allow the usage in other components, reduce repeatability of the code and improve visibility to allow clear understanding
   const {
     register,
     watch,
@@ -34,16 +37,19 @@ const Searchbox = () => {
     options: { enabled: !!isSubmitted },
   });
 
+  // Memoization - to calculate whether more data should be fetched, I'm memoizing variables since they can potentially operate on large datasets
   const userList = useMemo(() => data?.pages.flatMap(data => data.items), [data]);
 
   const totalCount = useMemo(
-    () => data?.pages[0].total_count,
+    () => data?.pages[0]?.total_count,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [query, data],
   );
 
   const hasMore = useMemo(() => userList && !!totalCount && userList.length < totalCount, [totalCount, userList]);
 
+  // Asynchronous logic in side effects - I'm adding a subscription to watch for form changes and call submit, while limiting the execution
+  // so that refetch doesn't happen on every user input but instead after a delay.
   useEffect(() => {
     const subscription = watch(
       debounce(
@@ -60,7 +66,7 @@ const Searchbox = () => {
   }, [handleSubmit, watch, refetch, reset]);
 
   return (
-    <form onSubmit={handleSubmit(() => refetch())} autoComplete="off">
+    <form onSubmit={handleSubmit(() => refetch())} autoComplete="off" data-testid="search-form">
       <Container>
         <Header>GitHub User Search</Header>
         <Box sx={{ width: '50%' }}>
